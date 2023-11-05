@@ -7,11 +7,12 @@ import hmac
 import base64
 import urllib.parse as urlparse
 
-
+# Pull in API key and Secret key from .env
 APIKEY = dotenv_values(".env")['APIKEY']
 SECRET = dotenv_values(".env")['SECRET']
 
 #%%
+# Google API documentation code for signing API requests
 def sign_url(input_url=None, secret=None):
     """ Sign a request URL with a URL signing secret.
       Usage:
@@ -53,7 +54,21 @@ def sign_url(input_url=None, secret=None):
 
 # %%d
 def get_image(location, size='600x400',heading=120, fov=90, saveImage=False, imgFileName=None):
+    """
+    Function to get images from Street View API, with options to save and name saved images.
 
+    Params:
+        location: Coordinates of image
+        size: Size of image, default 600x400
+        heading: Direction of camera, ranges from 0-360
+        fov: Fov controls the zoom level, where 90 is the default zoom, ranges from 0-120
+        saveImage: bool that if set to true will save image to data directory
+        imgFileName: name of image that will be assigned if saveImage is true
+
+    Returns:
+    Image display object to visualize request
+    
+    """
     URL = f"https://maps.googleapis.com/maps/api/streetview?key={APIKEY}&size={size}&location={location}&heading={heading}&fov={fov}"
     SignedURL = sign_url(input_url=URL, secret=SECRET)
     response = requests.get(SignedURL)
@@ -145,6 +160,9 @@ UG5 = [{'coord':"32.75405,-117.12815", 'heading':300},
 OHstrucs = [OH1, OH2, OH3, OH4, OH5]
 UGstrucs = [UG1, UG2, UG3, UG4, UG5]
 
+
+# Uses preselected coordinates and headings from above to make generate API requests
+# to generate image dataset.
 for struct_idx in range(len(OHstrucs)):
     currStruct = OHstrucs[struct_idx]
     for view_idx in range(len(currStruct)):
