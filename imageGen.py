@@ -1,15 +1,20 @@
 #%%
 import requests
 from IPython import display
-from dotenv import dotenv_values
+from dotenv import load_dotenv
 import hashlib
 import hmac
+import os
 import base64
 import urllib.parse as urlparse
 
+load_dotenv()
+
 # Pull in API key and Secret key from .env
-APIKEY = dotenv_values(".env")['APIKEY']
-SECRET = dotenv_values(".env")['SECRET']
+
+APIKEY = os.environ.get("API_KEY")
+SECRET = os.environ.get("SECRET")
+
 
 #%%
 # Google API documentation code for signing API requests
@@ -66,7 +71,7 @@ def get_image(location, size='600x400',heading=120, fov=90, saveImage=False, img
         imgFileName: name of image that will be assigned if saveImage is true
 
     Returns:
-    Image display object to visualize request
+    Image display object to visualize request, calling display.display(returned object) will visualize image generated.
     
     """
     URL = f"https://maps.googleapis.com/maps/api/streetview?key={APIKEY}&size={size}&location={location}&heading={heading}&fov={fov}"
@@ -170,7 +175,7 @@ for struct_idx in range(len(OHstrucs)):
         heading = currStruct[view_idx]['heading']
         for f in [90, 60, 25]:
             fName = f"OH_{struct_idx}_v{view_idx}_f{f}" 
-            display.display(get_image(loc, heading=heading,fov=f, saveImage=True, imgFileName=fName))
+            get_image(loc, heading=heading,fov=f, saveImage=True, imgFileName=fName)
 
 
 for struct_idx in range(len(UGstrucs)):
@@ -180,7 +185,7 @@ for struct_idx in range(len(UGstrucs)):
         heading = currStruct[view_idx]['heading']
         for f in [90, 60, 25]:
             fName = f"UG_{struct_idx}_v{view_idx}_f{f}" 
-            display.display(get_image(loc, heading=heading,fov=f, saveImage=True, imgFileName=fName))
+            get_image(loc, heading=heading,fov=f, saveImage=True, imgFileName=fName)
 
 
 
